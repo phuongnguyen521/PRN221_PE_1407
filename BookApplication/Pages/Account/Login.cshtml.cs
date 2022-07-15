@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -35,27 +34,25 @@ namespace BookApplication.Pages.Account
             {
                 Page();
             }
-
-            AccountUser user = _context.AccountUser.SingleOrDefault(user =>
-            user.UserFullName.Equals(AccountUser.UserFullName) &&
-            user.UserPassword.Equals(AccountUser.UserPassword));
+            var user = _context.AccountUser.SingleOrDefault(temp =>
+            temp.UserFullName.ToLower().Trim().Equals(AccountUser.UserFullName.ToLower().Trim()) &&
+            temp.UserPassword.Trim().Equals(AccountUser.UserPassword.Trim()));
             if (user != null)
             {
                 if (user.UserRole == 1)
                 {
                     var claims = new List<Claim>()
-                {
-                    new Claim(ClaimTypes.Name, AccountUser.UserFullName),
-                    new Claim(ClaimTypes.Role, user.UserRole.ToString())
-                };
+                    {
+                        new Claim(ClaimTypes.Name, user.UserFullName),
+                        new Claim(ClaimTypes.Role, user.UserRole.ToString())
+                    };
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var principal = new ClaimsPrincipal(identity);
                     var authenProperties = new AuthenticationProperties { };
 
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(identity),
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal,
                         authenProperties);
                     return LocalRedirect("/BookManagement/Index");
                 }
