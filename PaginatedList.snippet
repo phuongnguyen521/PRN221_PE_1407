@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Paginated List</Title>
+            <Author>Phuong Ngoc Nguyen</Author>
+            <Description>Paginated List templatei in C#</Description>
+            <Shortcut>pl</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[public class PaginatedList<T> : List<T>{
+                    public int PageIndex { get; private set; }
+                    public int TotalPages { get; set; }
+                    public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
+                    {
+                        PageIndex = pageIndex;
+                        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+                        this.AddRange(items);
+                    }
+                    public bool PreviousPage
+                    {
+                        get
+                        {
+                            return (PageIndex > 1);
+                        }
+                    }
+                    public bool NextPage
+                    {
+                        get
+                        {
+                            return (PageIndex < TotalPages);
+                        }
+                    }
+                    public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
+                    {
+                        var count = source.Count();
+                        var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                        return new PaginatedList<T>(items, count, pageIndex, pageSize);
+                    }
+                }]]>
+            </Code>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>
