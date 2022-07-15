@@ -1,0 +1,85 @@
+﻿@page
+@model BookWebApplicationWithDAO.Pages.BookManagement.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New Book</a>
+</p>
+
+<form asp-action="./Index" method="get">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="search" class="custom-control-label">Book Name</label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="searchName" value="@Model.SearchBookName" />
+            </div>
+        </div>
+        <div class="row">
+            <input type="submit" name="Search" class="btn btn-primary" />
+        </div>
+        <div class="row">
+            <a asp-page="./Index">Back to full list</a>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.BookNameSort">
+                   `@Html.DisplayNameFor(model => model.Book[0].BookName)
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.BookQuantitySort">
+                    @Html.DisplayNameFor(model => model.Book[0].Quantity)
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].AuthorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].Publisher)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Book) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BookName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher.PublisherId)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.BookId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.BookId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.BookId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+@{
+    var preDisabled = !Model.Book.PreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Book.NextPage ? "disabled" : "";
+}
+
+<a asp-page="./Index" asp-route-pageIndex=@(Model.Book.PageIndex - 1) class="btn btn-primary @preDisabled">Previous</a>
+<a asp-page="./Index" asp-route-pageIndex=@(Model.Book.PageIndex + 1) class="btn btn-primary @nextDisabled">Next</a>
