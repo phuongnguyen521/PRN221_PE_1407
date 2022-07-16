@@ -13,6 +13,7 @@ namespace BookApplication.Pages.BookManagement
 {
     public class IndexModel : PageModel
     {
+        private readonly IBookRepository bookRepository;
         private readonly BookDbContext _context;
 
         public IndexModel(BookDbContext context)
